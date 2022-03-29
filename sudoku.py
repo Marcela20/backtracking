@@ -69,50 +69,35 @@ class Sudoku:
         return True 
 
 
-
-
-
-
-
     def solve_sudku(self, board):
         not_empty = self.check_if_empty(board)
-
-        def backtrack(row, column): 
+        def backtrack(row, column):
+            if column == 9:
+                row += 1
+                column = 0
             if row == 9:
                 return True
-
-            else:
-                if (row, column) in not_empty:
-                    if column == 8:
-                        return backtrack(row+1, 0)
-                    else:
-                        return backtrack(row, column+1)
-
-
-                else:
-                        
-                    for digit in range(1, 10):
-
-                        if self.check_column(digit, column, board) and self.check_row(digit, row, board) and self.check_subboard(digit, row, column, board): 
-
-                            board[row][column] = digit
-                            if column == 8: 
-                                if backtrack(row+1, 0):
-                                    return True
-                            else:  
-                               if backtrack(row, column+1):
-                                   return True
-
-                            board[row][column] = 0
-
-            return "no solution exists"
             
-        if not self.check_if_board_valid(board):
-            return "not a valid board"
+            if (row, column) in not_empty:
+                return backtrack(row, column +1)
 
-        backtrack(0, 0)
+            for digit in range(1, 10):
+                if self.check_column(digit, column, board) and self.check_row(digit, row, board) and self.check_subboard(digit, row, column, board): 
+                    board[row][column] = digit 
 
-        return board
+                    if backtrack(row, column +1):
+                        return True
+                board[row][column] = 0
+
+            return False
+
+        if self.check_if_board_valid(board):
+            print(backtrack(0, 0))
+            return board
+        else:
+            return 'not a valid board'
+
+        
 
 
  
